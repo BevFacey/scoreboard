@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoreboard Controller</title>
+</head>
+<body>
+    <a href="display.html" target="_blank">Display</a>
+
+    <div>
+        <p>Home: <span id="homeValue">0</span></p>
+        <button id="incrementHome">+</button>
+        <button id="decrementHome">-</button>
+    </div>
+
+    <div>
+        <p>Away: <span id="awayValue">0</span></p>
+        <button id="incrementAway">+</button>
+        <button id="decrementAway">-</button>
+    </div>
+
+    <script>
+        const channel = new BroadcastChannel('score_channel');
+        let home = 0;
+        let away = 0;
+
+        function updateScore(team, increment) {
+            if (team === 'home') home += increment;
+            else if (team === 'away') away += increment;
+            
+            document.getElementById('homeValue').textContent = home;
+            document.getElementById('awayValue').textContent = away;
+            
+            channel.postMessage({ home, away });
+        }
+
+        document.getElementById('incrementHome').addEventListener('click', () => updateScore('home', 1));
+        document.getElementById('decrementHome').addEventListener('click', () => updateScore('home', -1));
+        document.getElementById('incrementAway').addEventListener('click', () => updateScore('away', 1));
+        document.getElementById('decrementAway').addEventListener('click', () => updateScore('away', -1));
+    </script>
+</body>
+</html>
