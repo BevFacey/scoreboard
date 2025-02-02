@@ -49,14 +49,14 @@
         <input type="color" id="homeTextColorPicker" value="#fcce21">
     </div>
 
-    <div class="column" id="awayColumn">
-        <p>Away: <span id="awayValue">0</span></p>
-        <button id="decrementAway">-</button>
-        <button id="incrementAway">+</button>
+    <div class="column" id="guestColumn">
+        <p>Guest: <span id="guestValue">0</span></p>
+        <button id="decrementGuest">-</button>
+        <button id="incrementGuest">+</button>
         <br>
         <br>
-        <input type="color" id="awayBackgroundColorPicker" value="#000000">
-        <input type="color" id="awayTextColorPicker" value="#ffffff">
+        <input type="color" id="guestBackgroundColorPicker" value="#000000">
+        <input type="color" id="guestTextColorPicker" value="#ffffff">
     </div>
 </div>
 <br>
@@ -67,8 +67,8 @@
         // set colors
         const homeBackgroundColorPicker = document.getElementById('homeBackgroundColorPicker');
         const homeTextColorPicker = document.getElementById('homeTextColorPicker');
-        const awayBackgroundColorPicker = document.getElementById('awayBackgroundColorPicker');
-        const awayTextColorPicker = document.getElementById('awayTextColorPicker');
+        const guestBackgroundColorPicker = document.getElementById('guestBackgroundColorPicker');
+        const guestTextColorPicker = document.getElementById('guestTextColorPicker');
         const setColorsButton = document.getElementById('setColors');
         const colorChannel = new BroadcastChannel('color_channel');
 
@@ -78,46 +78,45 @@
         homeTextColorPicker.addEventListener('input', () => {
             document.getElementById('homeColumn').style.color = homeTextColorPicker.value;
         });
-        awayBackgroundColorPicker.addEventListener('input', () => {
-            document.getElementById('awayColumn').style.backgroundColor = awayBackgroundColorPicker.value;
+        guestBackgroundColorPicker.addEventListener('input', () => {
+            document.getElementById('guestColumn').style.backgroundColor = guestBackgroundColorPicker.value;
         });
-        awayTextColorPicker.addEventListener('input', () => {
-            document.getElementById('awayColumn').style.color = awayTextColorPicker.value;
+        guestTextColorPicker.addEventListener('input', () => {
+            document.getElementById('guestColumn').style.color = guestTextColorPicker.value;
         });
         setColorsButton.addEventListener('click', () => {
             document.getElementById('homeColumn').style.backgroundColor = homeBackgroundColorPicker.value;
             document.getElementById('homeColumn').style.color = homeTextColorPicker.value;
-            document.getElementById('awayColumn').style.backgroundColor = awayBackgroundColorPicker.value;
-            document.getElementById('awayColumn').style.color = awayTextColorPicker.value;
+            document.getElementById('guestColumn').style.backgroundColor = guestBackgroundColorPicker.value;
+            document.getElementById('guestColumn').style.color = guestTextColorPicker.value;
             colorChannel.postMessage({
                 homeBackgroundColor: homeBackgroundColorPicker.value,
                 homeTextColor: homeTextColorPicker.value,
-                awayBackgroundColor: awayBackgroundColorPicker.value,
-                awayTextColor: awayTextColorPicker.value
+                guestBackgroundColor: guestBackgroundColorPicker.value,
+                guestTextColor: guestTextColorPicker.value
             });
-            console.log('Colors set');
         });
 
 
         // score controller
         const scoreChannel = new BroadcastChannel('score_channel');
         let home = 0;
-        let away = 0;
+        let guest = 0;
 
         function updateScore(team, increment) {
             if (team === 'home') home += increment;
-            else if (team === 'away') away += increment;
+            else if (team === 'guest') guest += increment;
             
             document.getElementById('homeValue').textContent = home;
-            document.getElementById('awayValue').textContent = away;
+            document.getElementById('guestValue').textContent = guest;
             
-            scoreChannel.postMessage({ home, away });
+            scoreChannel.postMessage({ home, guest });
         }
 
         document.getElementById('decrementHome').addEventListener('click', () => updateScore('home', -1));
         document.getElementById('incrementHome').addEventListener('click', () => updateScore('home', 1));
-        document.getElementById('decrementAway').addEventListener('click', () => updateScore('away', -1));
-        document.getElementById('incrementAway').addEventListener('click', () => updateScore('away', 1));
+        document.getElementById('decrementGuest').addEventListener('click', () => updateScore('guest', -1));
+        document.getElementById('incrementGuest').addEventListener('click', () => updateScore('guest', 1));
 
         // clock controller
         const clockChannel = new BroadcastChannel('clock_channel');
@@ -208,11 +207,8 @@
         increaseButton.addEventListener('click', increaseTime);
         decreaseButton.addEventListener('click', decreaseTime);
         setButton.addEventListener('click', setClock);
-        
 
         updateClockDisplay();
-
-
     </script>
 </body>
 </html>

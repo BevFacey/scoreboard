@@ -15,6 +15,11 @@
             /*background-color: lightgray;*/
             text-align: center;
         }
+        div {
+            font-size: 20px;
+            font-weight: bold;
+            font-family: Verdana, Geneva, Tahoma, sans-serif
+        }
     </style>
 </head>
 <body>
@@ -22,10 +27,9 @@
         
         <div class="column" id="homeColumn"><p>Home</p> <span id="homeValue">0</span></div>
         <div class="column">
-            <h3>Clock</h3>
             <div id="clock">00:00</div>
         </div>
-        <div class="column" id="awayColumn"><p>Away</p> <span id="awayValue">0</span></div>
+        <div class="column" id="guestColumn"><p>Guest</p> <span id="guestValue">0</span></div>
     </div>
 
     <script>
@@ -33,17 +37,14 @@
         colorChannel.onmessage = (event) => {
             document.getElementById('homeColumn').style.color = event.data.homeTextColor;
             document.getElementById('homeColumn').style.backgroundColor = event.data.homeBackgroundColor;
-            document.getElementById('awayColumn').style.color = event.data.awayTextColor;
-            document.getElementById('awayColumn').style.backgroundColor = event.data.awayBackgroundColor;
+            document.getElementById('guestColumn').style.color = event.data.guestTextColor;
+            document.getElementById('guestColumn').style.backgroundColor = event.data.guestBackgroundColor;
         };
 
         const scoreChannel = new BroadcastChannel('score_channel');
-        const homeValue = document.getElementById('homeValue');
-        const awayValue = document.getElementById('awayValue');
-
         scoreChannel.onmessage = (event) => {
-            homeValue.textContent = event.data.home;
-            awayValue.textContent = event.data.away;
+            document.getElementById('homeValue').textContent = event.data.home;
+            document.getElementById('guestValue').textContent = event.data.guest;
         };
 
         const clockChannel = new BroadcastChannel('clock_channel');
