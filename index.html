@@ -8,6 +8,25 @@
 <body>
     <a href="display.html" target="_blank">Display</a>
 
+    <div id="clock" style="text-align: center;">
+        <h3>Clock</h3>
+        <label><input type="checkbox" id="countdown" checked>Count Down</label>
+        <br>
+        <p>00:00</p>
+        <input type="number" id="minutes" placeholder="00" style="width: 35px;" min="0">:
+        <input type="number" id="seconds" placeholder="00" style="width: 35px;" min="0">
+        <br>
+        <button id="set">Set</button>
+        <br>
+        <br>
+        <button id="increase">+</button>
+        <button id="decrease">-</button>
+        <br>
+        <br>
+        <button id="start/pause">Start</button>
+        
+    </div>
+
     <div>
         <p>Home: <span id="homeValue">0</span></p>
         <button id="incrementHome">+</button>
@@ -21,6 +40,8 @@
     </div>
 
     <script>
+
+        // score controller
         const channel = new BroadcastChannel('score_channel');
         let home = 0;
         let away = 0;
@@ -39,6 +60,99 @@
         document.getElementById('decrementHome').addEventListener('click', () => updateScore('home', -1));
         document.getElementById('incrementAway').addEventListener('click', () => updateScore('away', 1));
         document.getElementById('decrementAway').addEventListener('click', () => updateScore('away', -1));
+
+        // clock controller
+        let intervalId;
+        let minutes = 0;
+        let seconds = 0;
+        let interval;
+        let isRunning = false;
+
+        const clockDisplay = document.querySelector('#clock p');
+        const startPauseButton = document.getElementById('start/pause');
+        const increaseButton = document.getElementById('increase');
+        const decreaseButton = document.getElementById('decrease');
+        const countdownCheckbox = document.getElementById('countdown');
+        const minutesInput = document.getElementById('minutes');
+        const secondsInput = document.getElementById('seconds');
+        const setButton = document.getElementById('set');
+
+        function setClock() {    
+            minutes = Number(minutesInput.value);
+            seconds = Number(secondsInput.value);
+            updateClockDisplay();
+        }
+
+        function updateClockDisplay() {
+            clockDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            // broadcast the time
+            channel.postMessage({ minutes, seconds });
+        }
+
+        function startPauseClock() {
+            if (isRunning) {
+                clearInterval(interval);
+                startPauseButton.textContent = 'Start';
+            } else {
+                interval = setInterval(() => {
+                    if (countdownCheckbox.checked) {
+                        if (seconds === 0) {
+                            if (minutes === 0) {
+                                clearInterval(interval);
+                                isRunning = false;
+                                startPauseButton.textContent = 'Start';
+                                return;
+                            }
+                            minutes--;
+                            seconds = 59;
+                        } else {
+                            seconds--;
+                        }
+                    } else {
+                        if (seconds === 59) {
+                            minutes++;
+                            seconds = 0;
+                        } else {
+                            seconds++;
+                        }
+                    }
+                    updateClockDisplay();
+                }, 1000);
+                startPauseButton.textContent = 'Pause';
+            }
+            isRunning = !isRunning;
+        }
+
+        function increaseTime() {
+            if (seconds === 59) {
+                minutes++;
+                seconds = 0;
+            } else {
+                seconds++;
+            }
+            updateClockDisplay();
+        }
+
+        function decreaseTime() {
+            if (minutes === 0 && seconds === 0) return;
+            if (seconds === 0) {
+                minutes--;
+                seconds = 59;
+            } else {
+                seconds--;
+            }
+            updateClockDisplay();
+        }
+
+        startPauseButton.addEventListener('click', startPauseClock);
+        increaseButton.addEventListener('click', increaseTime);
+        decreaseButton.addEventListener('click', decreaseTime);
+        setButton.addEventListener('click', setClock);
+        
+
+        updateClockDisplay();
+
+
     </script>
 </body>
 </html>
