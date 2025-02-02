@@ -39,7 +39,7 @@
         
     </div>
 
-    <div class="column">
+    <div class="column" id="homeColumn">
         <p>Home: <span id="homeValue">0</span></p>
         <button id="decrementHome">-</button>
         <button id="incrementHome">+</button>
@@ -49,7 +49,7 @@
         <input type="color" id="homeTextColorPicker" value="#fcce21">
     </div>
 
-    <div class="column">
+    <div class="column" id="awayColumn">
         <p>Away: <span id="awayValue">0</span></p>
         <button id="decrementAway">-</button>
         <button id="incrementAway">+</button>
@@ -59,7 +59,45 @@
         <input type="color" id="awayTextColorPicker" value="#ffffff">
     </div>
 </div>
+<br>
+<div id="bottomButtons" style="text-align: center;">
+    <button id="setColors">Set Colors</button>
+</div>
     <script>
+        // set colors
+        const homeBackgroundColorPicker = document.getElementById('homeBackgroundColorPicker');
+        const homeTextColorPicker = document.getElementById('homeTextColorPicker');
+        const awayBackgroundColorPicker = document.getElementById('awayBackgroundColorPicker');
+        const awayTextColorPicker = document.getElementById('awayTextColorPicker');
+        const setColorsButton = document.getElementById('setColors');
+        const colorChannel = new BroadcastChannel('color_channel');
+
+        homeBackgroundColorPicker.addEventListener('input', () => {
+            document.getElementById('homeColumn').style.backgroundColor = homeBackgroundColorPicker.value;
+        });
+        homeTextColorPicker.addEventListener('input', () => {
+            document.getElementById('homeColumn').style.color = homeTextColorPicker.value;
+        });
+        awayBackgroundColorPicker.addEventListener('input', () => {
+            document.getElementById('awayColumn').style.backgroundColor = awayBackgroundColorPicker.value;
+        });
+        awayTextColorPicker.addEventListener('input', () => {
+            document.getElementById('awayColumn').style.color = awayTextColorPicker.value;
+        });
+        setColorsButton.addEventListener('click', () => {
+            document.getElementById('homeColumn').style.backgroundColor = homeBackgroundColorPicker.value;
+            document.getElementById('homeColumn').style.color = homeTextColorPicker.value;
+            document.getElementById('awayColumn').style.backgroundColor = awayBackgroundColorPicker.value;
+            document.getElementById('awayColumn').style.color = awayTextColorPicker.value;
+            colorChannel.postMessage({
+                homeBackgroundColor: homeBackgroundColorPicker.value,
+                homeTextColor: homeTextColorPicker.value,
+                awayBackgroundColor: awayBackgroundColorPicker.value,
+                awayTextColor: awayTextColorPicker.value
+            });
+            console.log('Colors set');
+        });
+
 
         // score controller
         const scoreChannel = new BroadcastChannel('score_channel');
