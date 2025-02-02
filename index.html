@@ -15,32 +15,45 @@
             /*background-color: lightgray;*/
             text-align: center;
         }
+        div {
+            font-size: 20px;
+            font-family: Verdana, Geneva, Tahoma, sans-serif
+        }
+        .heading {
+            font-size: 24px;
+            font-weight: bold;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
     </style>
 </head>
 <body>
-    <a href="display.html" target="_blank">Launch Display Page</a>
 <div class="container">
-    <div id="clock" class="column">
-        <h3>Clock</h3>
+    <div id="clockColumn" class="column">
+        <div class="heading">Clock</div>
         <label><input type="checkbox" id="countdown" checked>Count Down</label>
         <br>
-        <p>00:00</p>
         <input type="number" id="minutes" placeholder="00" style="width: 35px;" min="0">:
         <input type="number" id="seconds" placeholder="00" style="width: 35px;" min="0">
         <br>
         <button id="set">Set</button>
         <br>
-        <br>
         <button id="decreaseTime">-</button>
         <button id="increaseTime">+</button>
         <br>
         <br>
+        <div id="clock">00:00</div>
+        <br>
         <button id="start/pause">Start</button>
+        <hr>
+        <div class="heading">Period</div>
+        <button id="decrementPeriod">-</button>
+        <span id="periodValue">0</span>
+        <button id="incrementPeriod">+</button>
         
     </div>
 
     <div class="column" id="homeColumn">
-        <p>Home: <span id="homeValue">0</span></p>
+        <div>Home: <span id="homeValue">0</span></div>
         <button id="decrementHome">-</button>
         <button id="incrementHome">+</button>
         <br>
@@ -50,7 +63,7 @@
     </div>
 
     <div class="column" id="guestColumn">
-        <p>Guest: <span id="guestValue">0</span></p>
+        <div>Guest: <span id="guestValue">0</span></div>
         <button id="decrementGuest">-</button>
         <button id="incrementGuest">+</button>
         <br>
@@ -62,6 +75,8 @@
 <br>
 <div id="bottomButtons" style="text-align: center;">
     <button id="setColors">Set Colors</button>
+    <br>
+    <a href="display.html" target="_blank" style="font-size: x-small">Launch Display Page</a>
 </div>
     <script>
         // set colors
@@ -118,6 +133,23 @@
         document.getElementById('decrementGuest').addEventListener('click', () => updateScore('guest', -1));
         document.getElementById('incrementGuest').addEventListener('click', () => updateScore('guest', 1));
 
+        // period controller
+        const periodChannel = new BroadcastChannel('period_channel');
+        const periodValue = document.getElementById('periodValue');
+        const decrementPeriodButton = document.getElementById('decrementPeriod');
+        const incrementPeriodButton = document.getElementById('incrementPeriod');
+        let period = 0;
+
+        function updatePeriod(increment) {
+            period += increment;
+            periodValue.textContent = period;
+            periodChannel.postMessage(period);
+        }
+
+        decrementPeriodButton.addEventListener('click', () => updatePeriod(-1));
+        incrementPeriodButton.addEventListener('click', () => updatePeriod(1));
+
+
         // clock controller
         const clockChannel = new BroadcastChannel('clock_channel');
         let intervalId;
@@ -127,7 +159,7 @@
         let isRunning = false;
         let clockValue = "00:00";
 
-        const clockDisplay = document.querySelector('#clock p');
+        const clockDisplay = document.getElementById('clock');
         const startPauseButton = document.getElementById('start/pause');
         const decreaseButton = document.getElementById('decreaseTime');
         const increaseButton = document.getElementById('increaseTime');

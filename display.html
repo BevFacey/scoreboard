@@ -28,6 +28,8 @@
         <div class="column" id="homeColumn"><p>Home</p> <span id="homeValue">0</span></div>
         <div class="column">
             <div id="clock">00:00</div>
+            <br>
+            <div id="period"></div>
         </div>
         <div class="column" id="guestColumn"><p>Guest</p> <span id="guestValue">0</span></div>
     </div>
@@ -50,6 +52,11 @@
         const clockChannel = new BroadcastChannel('clock_channel');
         clockChannel.onmessage = (event) => {
             document.getElementById('clock').textContent = event.data;
+        };
+
+        const periodChannel = new BroadcastChannel('period_channel');
+        periodChannel.onmessage = (event) => {
+            document.getElementById('period').textContent = event.data;
         };
     </script>
 </body>
