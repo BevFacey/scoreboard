@@ -49,7 +49,9 @@
         <button id="decrementPeriod">-</button>
         <span id="periodValue">0</span>
         <button id="incrementPeriod">+</button>
-        
+        <br>
+        <br>
+        <button id="overtimeButton">Overtime</button>
     </div>
 
     <div class="column" id="homeColumn">
@@ -86,7 +88,6 @@
         const guestTextColorPicker = document.getElementById('guestTextColorPicker');
         const setColorsButton = document.getElementById('setColors');
         const colorChannel = new BroadcastChannel('color_channel');
-
         homeBackgroundColorPicker.addEventListener('input', () => {
             document.getElementById('homeColumn').style.backgroundColor = homeBackgroundColorPicker.value;
         });
@@ -112,22 +113,17 @@
             });
         });
 
-
         // score controller
         const scoreChannel = new BroadcastChannel('score_channel');
         let home = 0;
         let guest = 0;
-
         function updateScore(team, increment) {
             if (team === 'home') home += increment;
             else if (team === 'guest') guest += increment;
-            
             document.getElementById('homeValue').textContent = home;
             document.getElementById('guestValue').textContent = guest;
-            
             scoreChannel.postMessage({ home, guest });
         }
-
         document.getElementById('decrementHome').addEventListener('click', () => updateScore('home', -1));
         document.getElementById('incrementHome').addEventListener('click', () => updateScore('home', 1));
         document.getElementById('decrementGuest').addEventListener('click', () => updateScore('guest', -1));
@@ -139,16 +135,31 @@
         const decrementPeriodButton = document.getElementById('decrementPeriod');
         const incrementPeriodButton = document.getElementById('incrementPeriod');
         let period = 0;
-
         function updatePeriod(increment) {
-            period += increment;
-            periodValue.textContent = period;
-            periodChannel.postMessage(period);
+            if (period > 0 || increment > 0) { // restrict to non-negative values
+                period += increment;
+                periodValue.textContent = period;
+                periodChannel.postMessage(period);
+            }
         }
-
         decrementPeriodButton.addEventListener('click', () => updatePeriod(-1));
         incrementPeriodButton.addEventListener('click', () => updatePeriod(1));
 
+        // overtime controller
+        let overtime = false;
+        document.getElementById('overtimeButton').addEventListener('click', () => {
+            overtime = !overtime;
+            if (overtime) {
+                document.getElementById('overtimeButton').style.backgroundColor = 'red';
+                periodValue.textContent = 'OT';
+                periodChannel.postMessage('overtime');
+            } else {
+                document.getElementById('overtimeButton').style.backgroundColor = 'lightgrey';
+                periodValue.textContent = period;
+                periodChannel.postMessage(period);
+            }
+            
+        });
 
         // clock controller
         const clockChannel = new BroadcastChannel('clock_channel');
@@ -158,7 +169,6 @@
         let interval;
         let isRunning = false;
         let clockValue = "00:00";
-
         const clockDisplay = document.getElementById('clock');
         const startPauseButton = document.getElementById('start/pause');
         const decreaseButton = document.getElementById('decreaseTime');

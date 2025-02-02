@@ -5,9 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scoreboard</title>
     <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
         .container {
             display: flex;
-            gap: 10px; /* Adds spacing between columns */
+            /* gap: 10px; */
+            width: 100%;
+            height: 100%;
         }
         .column {
             flex: 1; /* Makes all columns equal width */
@@ -29,7 +36,7 @@
         <div class="column">
             <div id="clock">00:00</div>
             <br>
-            <div id="period"></div>
+            <div id="periodLabel" style="display: none;">Period</div> <div id="period"></div>
         </div>
         <div class="column" id="guestColumn"><p>Guest</p> <span id="guestValue">0</span></div>
     </div>
@@ -54,9 +61,21 @@
             document.getElementById('clock').textContent = event.data;
         };
 
+        let period = 0;
         const periodChannel = new BroadcastChannel('period_channel');
         periodChannel.onmessage = (event) => {
-            document.getElementById('period').textContent = event.data;
+            period = event.data;
+            document.getElementById('period').textContent = period;
+            if (period == 'overtime') {
+                document.getElementById('periodLabel').style.display = 'none';
+                document.getElementById('period').textContent = 'OT';
+            }
+            else if (period > 0) {
+                document.getElementById('periodLabel').style.display = 'block';
+            } else {
+                document.getElementById('periodLabel').style.display = 'none';
+                document.getElementById('period').textContent = '';
+            }
         };
     </script>
 </body>
