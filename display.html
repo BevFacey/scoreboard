@@ -4,21 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scoreboard</title>
+    <style>
+        .container {
+            display: flex;
+            gap: 10px; /* Adds spacing between columns */
+        }
+        .column {
+            flex: 1; /* Makes all columns equal width */
+            padding: 20px;
+            /*background-color: lightgray;*/
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <div>
-        <p>Home: <span id="homeValue">0</span></p>
-        <p>Away: <span id="awayValue">0</span></p>
+    <div class="container">
+        
+        <div class="column"><p>Home</p> <span id="homeValue">0</span></div>
+        <div class="column">
+            <h3>Clock</h3>
+            <div id="clock">00:00</div>
+        </div>
+        <div class="column"><p>Away</p> <span id="awayValue">0</span></div>
     </div>
 
     <script>
-        const channel = new BroadcastChannel('score_channel');
+        const scoreChannel = new BroadcastChannel('score_channel');
         const homeValue = document.getElementById('homeValue');
         const awayValue = document.getElementById('awayValue');
 
-        channel.onmessage = (event) => {
+        scoreChannel.onmessage = (event) => {
             homeValue.textContent = event.data.home;
             awayValue.textContent = event.data.away;
+        };
+
+        const clockChannel = new BroadcastChannel('clock_channel');
+        clockChannel.onmessage = (event) => {
+            document.getElementById('clock').textContent = event.data;
         };
     </script>
 </body>

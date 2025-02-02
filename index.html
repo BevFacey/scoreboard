@@ -4,11 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scoreboard Controller</title>
+    <style>
+        .container {
+            display: flex;
+            gap: 10px; /* Adds spacing between columns */
+        }
+        .column {
+            flex: 1; /* Makes all columns equal width */
+            padding: 20px;
+            /*background-color: lightgray;*/
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <a href="display.html" target="_blank">Display</a>
-
-    <div id="clock" style="text-align: center;">
+    <a href="display.html" target="_blank">Launch Display Page</a>
+<div class="container">
+    <div id="clock" class="column">
         <h3>Clock</h3>
         <label><input type="checkbox" id="countdown" checked>Count Down</label>
         <br>
@@ -19,30 +31,30 @@
         <button id="set">Set</button>
         <br>
         <br>
-        <button id="increase">+</button>
-        <button id="decrease">-</button>
+        <button id="decreaseTime">-</button>
+        <button id="increaseTime">+</button>
         <br>
         <br>
         <button id="start/pause">Start</button>
         
     </div>
 
-    <div>
+    <div class="column">
         <p>Home: <span id="homeValue">0</span></p>
-        <button id="incrementHome">+</button>
         <button id="decrementHome">-</button>
+        <button id="incrementHome">+</button>
     </div>
 
-    <div>
+    <div class="column">
         <p>Away: <span id="awayValue">0</span></p>
-        <button id="incrementAway">+</button>
         <button id="decrementAway">-</button>
+        <button id="incrementAway">+</button>
     </div>
-
+</div>
     <script>
 
         // score controller
-        const channel = new BroadcastChannel('score_channel');
+        const scoreChannel = new BroadcastChannel('score_channel');
         let home = 0;
         let away = 0;
 
@@ -53,25 +65,27 @@
             document.getElementById('homeValue').textContent = home;
             document.getElementById('awayValue').textContent = away;
             
-            channel.postMessage({ home, away });
+            scoreChannel.postMessage({ home, away });
         }
 
-        document.getElementById('incrementHome').addEventListener('click', () => updateScore('home', 1));
         document.getElementById('decrementHome').addEventListener('click', () => updateScore('home', -1));
-        document.getElementById('incrementAway').addEventListener('click', () => updateScore('away', 1));
+        document.getElementById('incrementHome').addEventListener('click', () => updateScore('home', 1));
         document.getElementById('decrementAway').addEventListener('click', () => updateScore('away', -1));
+        document.getElementById('incrementAway').addEventListener('click', () => updateScore('away', 1));
 
         // clock controller
+        const clockChannel = new BroadcastChannel('clock_channel');
         let intervalId;
         let minutes = 0;
         let seconds = 0;
         let interval;
         let isRunning = false;
+        let clockValue = "00:00";
 
         const clockDisplay = document.querySelector('#clock p');
         const startPauseButton = document.getElementById('start/pause');
-        const increaseButton = document.getElementById('increase');
-        const decreaseButton = document.getElementById('decrease');
+        const decreaseButton = document.getElementById('decreaseTime');
+        const increaseButton = document.getElementById('increaseTime');
         const countdownCheckbox = document.getElementById('countdown');
         const minutesInput = document.getElementById('minutes');
         const secondsInput = document.getElementById('seconds');
@@ -84,9 +98,9 @@
         }
 
         function updateClockDisplay() {
-            clockDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            // broadcast the time
-            channel.postMessage({ minutes, seconds });
+            clockValue = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            clockDisplay.textContent = clockValue;
+            clockChannel.postMessage(clockValue); // broadcast the time
         }
 
         function startPauseClock() {
