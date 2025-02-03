@@ -133,8 +133,10 @@
         let home = 0;
         let guest = 0;
         function updateScore(team, increment) {
-            if (team === 'home') home += increment;
-            else if (team === 'guest') guest += increment;
+            if (team === 'home') {home += increment;}
+            else if (team === 'guest') {guest += increment;}
+            if (home < 0) {home = 0;}
+            if (guest < 0) {guest = 0;}
             document.getElementById('homeValue').textContent = home;
             document.getElementById('guestValue').textContent = guest;
             scoreChannel.postMessage({ home, guest });
@@ -202,7 +204,7 @@
         function updateClockDisplay() {
             clockValue = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
             clockDisplay.textContent = clockValue;
-            clockChannel.postMessage(clockValue); // broadcast the time
+            clockChannel.postMessage(clockValue);
         }
 
         function startPauseClock() {
