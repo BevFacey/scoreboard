@@ -27,7 +27,7 @@
             color: white; */
         }
         div {
-            font-size: 40px;
+            font-size: 5vw;
             font-weight: bold;
             font-family: Verdana, Geneva, Tahoma, sans-serif
         }
@@ -46,13 +46,30 @@
     </div>
 
     <script>
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                homeTextColor: params.get('homeText') || '#000000',
+                homeBackgroundColor: params.get('homeBackground') || '#FFFFFF',
+                guestTextColor: params.get('guestText') || '#000000',
+                guestBackgroundColor: params.get('guestBackground') || '#FFFFFF'
+            };
+        }
+
+        function applyColors(colors) {
+            document.getElementById('homeColumn').style.color = colors.homeTextColor;
+            document.getElementById('homeColumn').style.backgroundColor = colors.homeBackgroundColor;
+            document.getElementById('guestColumn').style.color = colors.guestTextColor;
+            document.getElementById('guestColumn').style.backgroundColor = colors.guestBackgroundColor;
+        }
+
         const colorChannel = new BroadcastChannel('color_channel');
         colorChannel.onmessage = (event) => {
-            document.getElementById('homeColumn').style.color = event.data.homeTextColor;
-            document.getElementById('homeColumn').style.backgroundColor = event.data.homeBackgroundColor;
-            document.getElementById('guestColumn').style.color = event.data.guestTextColor;
-            document.getElementById('guestColumn').style.backgroundColor = event.data.guestBackgroundColor;
+            applyColors(event.data);
         };
+
+        const colors = getQueryParams();
+        applyColors(colors);
 
         const scoreChannel = new BroadcastChannel('score_channel');
         scoreChannel.onmessage = (event) => {

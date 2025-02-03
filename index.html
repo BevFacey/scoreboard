@@ -12,7 +12,6 @@
         .column {
             flex: 1; /* Makes all columns equal width */
             padding: 20px;
-            /*background-color: lightgray;*/
             text-align: center;
         }
         div {
@@ -78,7 +77,7 @@
 <div id="bottomButtons" style="text-align: center;">
     <button id="setColors">Set Colors</button>
     <br>
-    <a href="display.html" target="_blank" style="font-size: x-small">Launch Display Page</a>
+    <a href="display.html" target="_blank" style="font-size: x-small" id="displayLink">Launch Display Page</a>
 </div>
     <script>
         // set colors
@@ -111,6 +110,12 @@
                 guestBackgroundColor: guestBackgroundColorPicker.value,
                 guestTextColor: guestTextColorPicker.value
             });
+            let url = new URL("display.html", window.location.href);
+            url.searchParams.set('homeBackground', homeBackgroundColorPicker.value);
+            url.searchParams.set('homeText', homeTextColorPicker.value);
+            url.searchParams.set('guestBackground', guestBackgroundColorPicker.value);
+            url.searchParams.set('guestText', guestTextColorPicker.value);
+            document.getElementById('displayLink').href = url.href;
         });
 
         // score controller
