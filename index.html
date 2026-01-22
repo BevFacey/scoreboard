@@ -77,6 +77,10 @@
 <div id="bottomButtons" style="text-align: center;">
     <button id="setColors">Set Colors</button>
     <br>
+    <button id="switchSides">Switch Sides</button>
+    <br>
+    <!-- <button id="fullScreen">Full Screen</button> -->
+    <br>
     <a href="display.html" target="_blank" style="font-size: x-small" id="displayLink">Launch Display Page</a>
     <br>
     <br>
@@ -127,6 +131,34 @@
             url.searchParams.set('guestText', guestTextColorPicker.value);
             document.getElementById('displayLink').href = url.href;
         });
+
+        // full screen... unfortunately this must be triggered by a user action
+        /*
+        const fullScreenButton = document.getElementById('fullScreen');
+        const fullScreenChannel = new BroadcastChannel('fullscreen_channel');
+        fullScreenButton.addEventListener('click', () => {
+            fullScreenChannel.postMessage('fullscreen');
+        });//*/
+
+        // switch sides
+        var sides = 0;
+        const switchSidesChannel = new BroadcastChannel('switch_sides_channel');
+        const switchSidesButton = document.getElementById('switchSides');
+        switchSidesButton.addEventListener('click', () => {
+            switchSidesChannel.postMessage('switch');
+            const homeColumn = document.getElementById('homeColumn');
+            const guestColumn = document.getElementById('guestColumn');
+            const container = homeColumn.parentNode;
+            if (sides == 0) {
+                container.insertBefore(guestColumn, homeColumn);
+                sides = 1;
+            } else {
+                container.insertBefore(homeColumn, guestColumn);
+                sides = 0;
+            }
+            
+        });
+
 
         // score controller
         const scoreChannel = new BroadcastChannel('score_channel');

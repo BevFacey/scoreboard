@@ -103,6 +103,13 @@
             }
         };
 
+        const fullScreenChannel = new BroadcastChannel('fullscreen_channel');
+        fullScreenChannel.onmessage = (event) => {
+            if (event.data === 'fullscreen') {
+                toggleFullScreen();
+            }
+        };
+
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen();
