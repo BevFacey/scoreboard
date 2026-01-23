@@ -41,7 +41,7 @@
     <div class="container" onclick="toggleFullScreen()">
         
         <div class="column" id="homeColumn"><p>Home</p> <span id="homeValue">0</span></div>
-        <div class="column">
+        <div class="column" id="clockColumn">
             <div id="clock" style="font-size: 200%;">00:00</div>
             <br>
             <div id="periodLabel" style="display: none;">Period</div> <div id="period"></div>
@@ -103,12 +103,32 @@
             }
         };
 
+        const sidesChannel = new BroadcastChannel('switch_sides_channel');
+        var sides = 0;
+        sidesChannel.onmessage = (event) => {
+            console.log('Received sides change:', event.data);
+            const homeColumn = document.getElementById('homeColumn');
+            const clockColumn = document.getElementById('clockColumn');
+            const guestColumn = document.getElementById('guestColumn');
+            const container = homeColumn.parentNode;
+            if (sides == 0) {
+                container.insertBefore(clockColumn, homeColumn);
+                container.insertBefore(guestColumn, clockColumn);
+            } else {
+                container.insertBefore(clockColumn, guestColumn);
+                container.insertBefore(homeColumn, clockColumn);
+            }
+            sides = 1 - sides; // toggle between 0 and 1
+        };
+
+        // unfortunately fullscreen requests must be initiated by user interaction
+        /*
         const fullScreenChannel = new BroadcastChannel('fullscreen_channel');
         fullScreenChannel.onmessage = (event) => {
             if (event.data === 'fullscreen') {
                 toggleFullScreen();
             }
-        };
+        };//*/
 
         function toggleFullScreen() {
             if (!document.fullscreenElement) {

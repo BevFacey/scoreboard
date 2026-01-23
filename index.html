@@ -53,6 +53,16 @@
         <button id="overtimeButton">Overtime</button>
     </div>
 
+    <div class="column" id="guestColumn">
+        <div>Guest: <span id="guestValue">0</span></div>
+        <button id="decrementGuest">-</button>
+        <button id="incrementGuest">+</button>
+        <br>
+        <br>
+        <input type="color" id="guestBackgroundColorPicker" value="#000000">
+        <input type="color" id="guestTextColorPicker" value="#ffffff">
+    </div>
+
     <div class="column" id="homeColumn">
         <div>Home: <span id="homeValue">0</span></div>
         <button id="decrementHome">-</button>
@@ -63,17 +73,10 @@
         <input type="color" id="homeTextColorPicker" value="#fcce21">
     </div>
 
-    <div class="column" id="guestColumn">
-        <div>Guest: <span id="guestValue">0</span></div>
-        <button id="decrementGuest">-</button>
-        <button id="incrementGuest">+</button>
-        <br>
-        <br>
-        <input type="color" id="guestBackgroundColorPicker" value="#000000">
-        <input type="color" id="guestTextColorPicker" value="#ffffff">
-    </div>
 </div>
+
 <br>
+
 <div id="bottomButtons" style="text-align: center;">
     <button id="setColors">Set Colors</button>
     <br>
@@ -83,15 +86,28 @@
     <br>
     <a href="display.html" target="_blank" style="font-size: x-small" id="displayLink">Launch Display Page</a>
     <br>
+    <button id="refreshDisplayPage">Refresh Display Page</button>
     <br>
-    <div id="instructions" style="font-size: x-small;"><table>
+    <div id="instructions0" style="font-size: x-small;">
+        <table>
+        <tr><td colspan="2"><b>Keyboard Shortcuts</b></td></tr></thead>
+        <tr><td><b>Space</b></td><td>Start/Pause Clock</td></tr>
+        <tr><td><b>a</b></td><td>Guest Score -</td></tr>
+        <tr><td><b>s</b></td><td>Guest Score +</td></tr>
+        <tr><td><b>d</b></td><td>Home Score -</td></tr>
+        <tr><td><b>f</b></td><td>Home Score +</td></tr>
+        </table>
+    </div>
+    <div id="instructions1" style="font-size: x-small; display: none;">
+        <table>
         <tr><td colspan="2"><b>Keyboard Shortcuts</b></td></tr></thead>
         <tr><td><b>Space</b></td><td>Start/Pause Clock</td></tr>
         <tr><td><b>a</b></td><td>Home Score -</td></tr>
         <tr><td><b>s</b></td><td>Home Score +</td></tr>
         <tr><td><b>d</b></td><td>Guest Score -</td></tr>
         <tr><td><b>f</b></td><td>Guest Score +</td></tr>
-    </table></div>
+        </table>
+    </div>
 </div>
     <script>
         // set colors
@@ -150,13 +166,16 @@
             const guestColumn = document.getElementById('guestColumn');
             const container = homeColumn.parentNode;
             if (sides == 0) {
-                container.insertBefore(guestColumn, homeColumn);
+                container.insertBefore(homeColumn, guestColumn);
+                document.getElementById('instructions0').style.display = 'none';
+                document.getElementById('instructions1').style.display = 'block';
                 sides = 1;
             } else {
-                container.insertBefore(homeColumn, guestColumn);
+                container.insertBefore(guestColumn, homeColumn);
+                document.getElementById('instructions1').style.display = 'none';
+                document.getElementById('instructions0').style.display = 'block';
                 sides = 0;
             }
-            
         });
 
 
@@ -307,16 +326,32 @@
                     startPauseClock();
                     break;
                 case 'a':
-                    updateScore('home', -1);
+                    if (sides === 0) {
+                        updateScore('guest', -1);
+                    } else {
+                        updateScore('home', -1);
+                    }
                     break;
                 case 's':
-                    updateScore('home', 1);
+                    if (sides === 0) {
+                        updateScore('guest', 1);
+                    } else {
+                        updateScore('home', 1);
+                    }
                     break;
                 case 'd':
-                    updateScore('guest', -1);
+                    if (sides === 0) {
+                        updateScore('home', -1);
+                    } else {
+                        updateScore('guest', -1);
+                    }
                     break;
                 case 'f':
-                    updateScore('guest', 1);
+                    if (sides === 0) {
+                        updateScore('home', 1);
+                    } else {
+                        updateScore('guest', 1);
+                    }
                     break;
             }
         });
