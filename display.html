@@ -121,6 +121,24 @@
             sides = 1 - sides; // toggle between 0 and 1
         };
 
+        const dataChannel = new BroadcastChannel('data_channel');
+        dataChannel.onmessage = (event) => {
+            const data = event.data;
+            document.getElementById('homeValue').textContent = data.homeScore;
+            document.getElementById('guestValue').textContent = data.guestScore;
+            document.getElementById('clock').textContent = data.clock;
+            document.getElementById('period').textContent = data.period;
+            if (int(data.period) > 0) {
+                document.getElementById('periodLabel').style.display = 'block';
+            } else {
+                document.getElementById('periodLabel').style.display = 'none';
+            };
+            if (int(data.sides) != sides) {
+                // trigger sides switch
+                sidesChannel.postMessage('switch');
+            }
+        };
+
         // unfortunately fullscreen requests must be initiated by user interaction
         /*
         const fullScreenChannel = new BroadcastChannel('fullscreen_channel');

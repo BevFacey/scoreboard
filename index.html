@@ -178,6 +178,23 @@
             }
         });
 
+        // refresh display page
+        const refreshDisplayButton = document.getElementById('refreshDisplayPage');
+        const dataChannel = new BroadcastChannel('data_channel');
+        refreshDisplayButton.addEventListener('click', () => {
+            const guestScore = document.getElementById('guestValue').textContent;
+            const homeScore = document.getElementById('homeValue').textContent;
+            const period = document.getElementById('periodValue').textContent;
+            const clock = document.getElementById('clock').textContent;
+            dataChannel.postMessage({
+                guestScore: guestScore,
+                homeScore: homeScore,
+                period: period,
+                clock: clock,
+                sides: sides,
+            });
+            setColorsButton.click();
+        });
 
         // score controller
         const scoreChannel = new BroadcastChannel('score_channel');
