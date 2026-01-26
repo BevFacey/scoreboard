@@ -338,6 +338,9 @@
 
         // Keybindings
         document.addEventListener('keydown', (event) => {
+            if (event.code === 'Space') {
+                event.preventDefault(); // Prevent scrolling or button clicking when space is pressed
+            }
             switch (event.key) {
                 case ' ':
                     startPauseClock();
